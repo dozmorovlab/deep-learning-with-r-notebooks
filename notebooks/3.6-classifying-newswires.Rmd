@@ -4,6 +4,8 @@ output:
   html_notebook: 
     theme: cerulean
     highlight: textmate
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
@@ -28,7 +30,7 @@ We will be working with the _Reuters dataset_, a set of short newswires and thei
 Like IMDB and MNIST, the Reuters dataset comes packaged as part of Keras. Let's take a look right away:
 
 ```{r}
-library(keras)
+library(keras3)
 
 reuters <- dataset_reuters(num_words = 10000)
 c(c(train_data, train_labels), c(test_data, test_labels)) %<-% reuters
@@ -123,8 +125,8 @@ In a stack of dense layers like what we were using, each layer can only access i
 For this reason we will use larger layers. Let's go with 64 units:
 
 ```{r}
-model <- keras_model_sequential() %>% 
-  layer_dense(units = 64, activation = "relu", input_shape = c(10000)) %>% 
+model <- keras_model_sequential(input_shape = c(10000)) %>% 
+  layer_dense(units = 64, activation = "relu") %>% 
   layer_dense(units = 64, activation = "relu") %>% 
   layer_dense(units = 46, activation = "softmax")
 ```
@@ -181,8 +183,8 @@ plot(history)
 The network begins to overfit after nine epochs. Let's train a new network from scratch for nine epochs and then evaluate it on the test set.
 
 ```{r, echo=TRUE, results='hide'}
-model <- keras_model_sequential() %>% 
-  layer_dense(units = 64, activation = "relu", input_shape = c(10000)) %>% 
+model <- keras_model_sequential(input_shape = c(10000)) %>% 
+  layer_dense(units = 64, activation = "relu") %>% 
   layer_dense(units = 64, activation = "relu") %>% 
   layer_dense(units = 46, activation = "softmax")
   
@@ -262,8 +264,8 @@ This new loss function is still mathematically the same as `categorical_crossent
 We mentioned earlier that since our final outputs were 46-dimensional, we should avoid intermediate layers with much less than 46 hidden units. Now let's try to see what happens when we introduce an information bottleneck by having intermediate layers significantly less than 46-dimensional, e.g. 4-dimensional.
 
 ```{r, echo=TRUE, results='hide'}
-model <- keras_model_sequential() %>% 
-  layer_dense(units = 64, activation = "relu", input_shape = c(10000)) %>% 
+model <- keras_model_sequential(input_shape = c(10000)) %>% 
+  layer_dense(units = 64, activation = "relu") %>% 
   layer_dense(units = 4, activation = "relu") %>% 
   layer_dense(units = 46, activation = "softmax")
   

@@ -4,6 +4,8 @@ output:
   html_notebook: 
     theme: cerulean
     highlight: textmate
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
@@ -30,7 +32,7 @@ Just like the MNIST dataset, the IMDB dataset comes packaged with Keras. It has 
 The following code will load the dataset (when you run it for the first time, about 80MB of data will be downloaded to your machine):
 
 ```{r, results='hide'}
-library(keras)
+library(keras3)
 
 imdb <- dataset_imdb(num_words = 10000)
 c(c(train_data, train_labels), c(test_data, test_labels)) %<-% imdb
@@ -142,8 +144,8 @@ And here's the Keras implementation, very similar to the MNIST example you saw p
 ```{r}
 library(keras)
 
-model <- keras_model_sequential() %>% 
-  layer_dense(units = 16, activation = "relu", input_shape = c(10000)) %>% 
+model <- keras_model_sequential(input_shape = c(10000)) %>% 
+  layer_dense(units = 16, activation = "relu") %>% 
   layer_dense(units = 16, activation = "relu") %>% 
   layer_dense(units = 1, activation = "sigmoid")
 ```
@@ -165,7 +167,7 @@ You're passing your optimizer, loss function, and metrics as strings, which is p
 
 ```{r}
 model %>% compile(
-  optimizer = optimizer_rmsprop(lr=0.001),
+  optimizer = optimizer_rmsprop(learning_rate=0.001),
   loss = "binary_crossentropy",
   metrics = c("accuracy")
 ) 
@@ -175,7 +177,7 @@ The latter can be done by passing function objects as the `loss` or `metrics` ar
 
 ```{r}
 model %>% compile(
-  optimizer = optimizer_rmsprop(lr = 0.001),
+  optimizer = optimizer_rmsprop(learning_rate = 0.001),
   loss = loss_binary_crossentropy,
   metrics = metric_binary_accuracy
 ) 
@@ -243,8 +245,8 @@ In this case, to prevent overfitting, you could stop training after three epochs
 Let's train a new network from scratch for four epochs and then evaluate it on the test data.
 
 ```{r, echo=TRUE, results='hide'}
-model <- keras_model_sequential() %>% 
-  layer_dense(units = 16, activation = "relu", input_shape = c(10000)) %>% 
+model <- keras_model_sequential(input_shape = c(10000)) %>% 
+  layer_dense(units = 16, activation = "relu") %>% 
   layer_dense(units = 16, activation = "relu") %>% 
   layer_dense(units = 1, activation = "sigmoid")
 

@@ -4,6 +4,8 @@ output:
   html_notebook: 
     theme: cerulean
     highlight: textmate
+editor_options: 
+  chunk_output_type: inline
 ---
 
 ```{r setup, include=FALSE}
@@ -49,7 +51,7 @@ Here are a few of the tricks that we leverage in our own implementation of a GAN
 First, we develop a `generator` model, which turns a vector (from the latent space -- during training it will sampled at random) into a candidate image. One of the many issues that commonly arise with GANs is that the generator gets stuck with generated images that look like noise. A possible solution is to use dropout on both the discriminator and generator.
 
 ```{r}
-library(keras)
+library(keras3)
 
 latent_dim <- 32
 height <- 32
@@ -120,7 +122,7 @@ summary(discriminator)
 # To stabilize training, we use learning rate decay
 # and gradient clipping (by value) in the optimizer.
 discriminator_optimizer <- optimizer_rmsprop( 
-  lr = 0.0008, 
+  learning_rate = 0.0008, 
   clipvalue = 1.0,
   decay = 1e-8
 )
@@ -145,7 +147,7 @@ gan_output <- discriminator(generator(gan_input))
 gan <- keras_model(gan_input, gan_output)
 
 gan_optimizer <- optimizer_rmsprop(
-  lr = 0.0004, 
+  learning_rate = 0.0004, 
   clipvalue = 1.0, 
   decay = 1e-8
 )
@@ -179,7 +181,7 @@ x_train <- x_train[as.integer(y_train) == 6,,,]
 # Normalizes data
 x_train <- x_train / 255
 
-iterations <- 10000
+iterations <- 1000
 batch_size <- 20
 save_dir <- "gan_images"
 dir.create(save_dir)
@@ -237,7 +239,7 @@ for (step in 1:iterations) {
   if (step %% 100 == 0) { 
     
     # Saves model weights
-    save_model_weights_hdf5(gan, "gan.h5")
+    save_model_weights(gan, ".weights.h5")
     
     # Prints metrics
     cat("discriminator loss:", d_loss, "\n")

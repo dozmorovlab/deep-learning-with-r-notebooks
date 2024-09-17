@@ -4,6 +4,8 @@ output:
   html_notebook: 
     theme: cerulean
     highlight: textmate
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include=FALSE}
@@ -23,7 +25,7 @@ The problem we're trying to solve here is to classify grayscale images of handwr
 The MNIST dataset comes preloaded in Keras, in the form of `train` and `test` lists, each of which includes a set of images (`x`) and associated labels (`y`):
 
 ```{r, results='hide'}
-library(keras)
+library(keras3)
 
 mnist <- dataset_mnist()
 train_images <- mnist$train$x
@@ -59,8 +61,8 @@ The workflow will be as follows: first we'll feed the neural network the trainin
 Let's build the network -- again, remember that you aren't supposed to understand everything about this example yet.
 
 ```{r}
-network <- keras_model_sequential() %>% 
-  layer_dense(units = 512, activation = "relu", input_shape = c(28 * 28)) %>% 
+network <- keras_model_sequential(input_shape = c(28 * 28)) %>% 
+  layer_dense(units = 512, activation = "relu") %>% 
   layer_dense(units = 10, activation = "softmax")
 ```
 
