@@ -142,7 +142,7 @@ Here's what our network looks like:
 And here's the Keras implementation, very similar to the MNIST example you saw previously:
 
 ```{r}
-library(keras)
+# library(keras)
 
 model <- keras_model_sequential(input_shape = c(10000)) %>% 
   layer_dense(units = 16, activation = "relu") %>% 
